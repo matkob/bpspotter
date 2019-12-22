@@ -1,5 +1,7 @@
 import numpy as np
 
+from model import BoundingBox
+
 
 def is_uniform(image):
     unique = np.unique(image)
@@ -68,9 +70,10 @@ def extract(regions, image):
         max_x = max([r[2] for r in region_group])
         max_y = max([r[3] for r in region_group])
         extracted_region = np.zeros(image.shape, dtype=np.uint8)
+        box = BoundingBox(min_x, max_x, min_y, max_y)
         for region in region_group:
             extracted_region[region[1]:region[3], region[0]:region[2]] = image[region[1]:region[3], region[0]:region[2]]
-        roi.append(extracted_region[min_y:max_y, min_x:max_x])
+        roi.append((extracted_region[min_y:max_y, min_x:max_x], box))
     return roi
 
 

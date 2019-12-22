@@ -26,9 +26,10 @@ def segment(image):
     erosion = cv2.erode(mask, kernel, iterations=2)
     dilation = cv2.dilate(erosion, kernel, iterations=1)
     extracted_objects = split_merge(dilation, image)
-    for obj in extracted_objects:
-        cv2.imshow('roi', obj)
-        cv2.waitKey(0)
+    for obj, box in extracted_objects:
+        if obj.shape[0] * obj.shape[1] > 1000:
+            cv2.imshow('roi', obj)
+            cv2.waitKey(0)
 
 
 true_logos, false_logos = load_images()
