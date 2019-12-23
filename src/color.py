@@ -13,18 +13,22 @@ def rgb2hsv(image):
             g2 = float(g) / 255
             c_max = max(r2, g2, b2)
             c_min = min(r2, g2, b2)
-            d = float(c_max - c_min)
-            if d == 0:
+
+            v = c_max
+            s = 0 if v == 0 else (v - c_min) / v
+            if c_min == c_max:
                 h = 0
-            elif c_max == r2:
-                h = 60 * (((g2 - b2) / d) % 6)
-            elif c_max == g2:
-                h = 60 * (((b2 - r2) / d) + 2)
+            elif v == r2:
+                h = 60 * (g2 - b2) / (v - c_min)
+            elif v == g2:
+                h = 120 + 60 * (b2 - r2) / (v - c_min)
             else:
-                h = 60 * (((r2 - g2) / d) + 4)
+                h = 240 + 60 * (r2 - g2) / (v - c_min)
+            if h < 0:
+                h = h + 360
 
             h = int(h / 2)
-            s = 0 if c_max == 0 else int(d / c_max * 255)
-            v = int(c_max * 255)
+            s = int(s * 255)
+            v = int(v * 255)
             copy[row, col] = [h, s, v]
     return copy

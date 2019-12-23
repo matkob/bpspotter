@@ -19,9 +19,11 @@ def load_images():
 
 
 def segment(image):
-    hsv = rgb2hsv(image)
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    hsv2 = rgb2hsv(image)
     hsv = cv2.blur(hsv, (5, 5))
-    mask = cv2.inRange(hsv, (28, 15, 0), (70, 255, 255))
+    mask = cv2.inRange(hsv, (40, 0, 0), (84, 255, 240))
+    mask2 = cv2.inRange(hsv2, (40, 0, 0), (84, 255, 240))
     kernel = np.ones((5, 5), np.uint8)
     erosion = cv2.erode(mask, kernel, iterations=2)
     dilation = cv2.dilate(erosion, kernel, iterations=1)
