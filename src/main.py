@@ -1,5 +1,5 @@
 from os import listdir
-
+from color import rgb2hsv
 import cv2
 import numpy as np
 
@@ -19,7 +19,7 @@ def load_images():
 
 
 def segment(image):
-    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+    hsv = rgb2hsv(image)
     hsv = cv2.blur(hsv, (5, 5))
     mask = cv2.inRange(hsv, (28, 15, 0), (70, 255, 255))
     kernel = np.ones((5, 5), np.uint8)
