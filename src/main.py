@@ -1,29 +1,20 @@
-from os import listdir
 from color import rgb2hsv
-import cv2
+from color import range_filter
 import numpy as np
-
 from segmentation import split_merge
-
-
-def load_images():
-    bp_logos = []
-    fake_logos = []
-    true_dir = 'data/true/'
-    false_dir = 'data/false/'
-    for file in listdir(true_dir)[:10]:
-        bp_logos.append(cv2.imread(true_dir + file))
-    for file in listdir(false_dir)[:1]:
-        fake_logos.append(cv2.imread(false_dir + file))
-    return bp_logos, fake_logos
+import cv2
+import loader
 
 
 def segment(image):
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    hsv2 = rgb2hsv(image)
-    hsv = cv2.blur(hsv, (5, 5))
-    mask = cv2.inRange(hsv, (40, 0, 0), (84, 255, 240))
-    mask2 = cv2.inRange(hsv2, (40, 0, 0), (84, 255, 240))
+    cv2.imshow('image', image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    hsv = rgb2hsv(image)
+    mask = range_filter(hsv, (40, 0, 0), (80, 255, 240))
+    cv2.imshow('mask', mask)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     kernel = np.ones((5, 5), np.uint8)
     erosion = cv2.erode(mask, kernel, iterations=2)
     dilation = cv2.dilate(erosion, kernel, iterations=1)
@@ -32,9 +23,10 @@ def segment(image):
         if obj.shape[0] * obj.shape[1] > 1000:
             cv2.imshow('roi', obj)
             cv2.waitKey(0)
+            cv2.destroyWindow('roi')
 
 
-true_logos, false_logos = load_images()
+true_logos, false_logos = loader.load_images()
 for i in true_logos[1:]:
     segment(i)
 # segment(cv2.imread('data/true/213_true_1.jpg'))
