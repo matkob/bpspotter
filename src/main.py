@@ -1,25 +1,23 @@
+from segmentation import split_merge
 from color import rgb2hsv
 from color import range_filter
+from transform import dilate
+from transform import erode
 import numpy as np
-from segmentation import split_merge
 import cv2
 import loader
 
 
 def segment(image):
-    cv2.imshow('image', image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    kernel = np.ones((3, 3), np.uint8)
     hsv = rgb2hsv(image)
-    mask = range_filter(hsv, (40, 0, 0), (80, 255, 240))
-    cv2.imshow('mask', mask)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    kernel = np.ones((5, 5), np.uint8)
-    erosion = cv2.erode(mask, kernel, iterations=2)
-    dilation = cv2.dilate(erosion, kernel, iterations=1)
-    extracted_objects = split_merge(dilation, image)
-    for obj, box in extracted_objects:
+    mask_green = dilate(erode(range_filter(hsv, (40, 0, 0), (80, 255, 240)), kernel), kernel)
+    mask_yellow = dilate(erode(range_filter(hsv, (20, 0, 0), (40, 255, 240)), kernel), kernel)
+    mask_white = dilate(erode(range_filter(hsv, (0, 0, 160), (180, 50, 255)), kernel), kernel)
+    green_objects = split_merge(mask_green, image)
+    yellow_objects = split_merge(mask_yellow, image)
+    white_objects = split_merge(mask_white, image)
+    for obj, box in green_objects:
         if obj.shape[0] * obj.shape[1] > 1000:
             cv2.imshow('roi', obj)
             cv2.waitKey(0)
