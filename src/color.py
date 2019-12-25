@@ -35,7 +35,8 @@ def rgb2hsv(image):
 
 
 def range_filter(image, low, high):
-    mask = np.zeros(image.shape)
+    height, width, channels = image.shape
+    mask = np.zeros((height, width), dtype=np.uint8)
     height, width, channels = image.shape
     assert channels == 3 and channels == len(low) and channels == len(high)
     for col in range(width):
