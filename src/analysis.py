@@ -23,7 +23,7 @@ def central_momentum(image, p, q, accepted):
 
 def image_invariants(image, accepted):
     M = {}
-    invariants = {}
+    invariants = []
     m00 = momentum(image, 0, 0, accepted)
     m01 = momentum(image, 0, 1, accepted)
     m10 = momentum(image, 1, 0, accepted)
@@ -46,17 +46,17 @@ def image_invariants(image, accepted):
     M[12] = m12 - 2 * m11 * j - m02 * i + 2 * m10 * pow(j, 2)
     M[30] = m30 - 3 * m20 * i + 2 * m10 * pow(i, 2)
     M[3] = m03 - 3 * m02 * j + 2 * m01 * pow(j, 2)
-    invariants[1] = (M[20] + M[2]) / pow(m00, 2)
-    invariants[2] = (pow(M[20] - M[2], 2) + 4 * pow(M[11], 2)) / pow(m00, 4)
-    invariants[3] = (pow(M[30] - 3 * M[12], 2) + pow(3 * M[21] - M[3], 2)) / pow(m00, 5)
-    invariants[4] = (pow(M[30] + M[12], 2) + pow(M[21] + M[3], 2)) / pow(m00, 5)
-    invariants[5] = ((M[30] - 3 * M[12]) * (M[30] + M[12]) * (pow(M[30] + M[12], 2) - 3 * pow(M[21] + M[3], 2))
-    + (3 * M[21] - M[3]) * (M[21] + M[3]) * (3 * pow(M[30] + M[12], 2) - pow(M[21] + M[3], 2))) / pow(m00, 10)
-    invariants[6] = ((M[20] - M[2]) * (pow(M[30] + M[12], 2) - pow(M[21] + M[3], 2)) + 4 * M[11] * (M[30] + M[12]) * (M[21] + M[3])) / pow(m00, 7)
-    invariants[7] = (M[20] * M[2] - pow(M[11], 2)) / pow(m00, 4)
-    invariants[8] = (M[30] * M[12] + M[21] * M[3] - pow(M[12], 2) - pow(M[21], 2)) / pow(m00, 5)
-    invariants[9] = (M[20] * (M[21] * M[3] - pow(M[12], 2)) + M[2] * (M[3] * M[12] - pow(M[21], 2)) - M[11] * (M[30] * M[3] - M[21] * M[12])) / pow(m00, 7)
-    invariants[10] = (pow(M[30] * M[3] - M[12] * M[21], 2) - 4 * (M[30] * M[12] - pow(M[21], 2)) * (M[3] * M[21] - M[12])) / pow(m00, 10)
+    invariants.append((M[20] + M[2]) / pow(m00, 2))
+    invariants.append((pow(M[20] - M[2], 2) + 4 * pow(M[11], 2)) / pow(m00, 4))
+    invariants.append((pow(M[30] - 3 * M[12], 2) + pow(3 * M[21] - M[3], 2)) / pow(m00, 5))
+    invariants.append((pow(M[30] + M[12], 2) + pow(M[21] + M[3], 2)) / pow(m00, 5))
+    invariants.append(((M[30] - 3 * M[12]) * (M[30] + M[12]) * (pow(M[30] + M[12], 2) - 3 * pow(M[21] + M[3], 2))
+    + (3 * M[21] - M[3]) * (M[21] + M[3]) * (3 * pow(M[30] + M[12], 2) - pow(M[21] + M[3], 2))) / pow(m00, 10))
+    invariants.append(((M[20] - M[2]) * (pow(M[30] + M[12], 2) - pow(M[21] + M[3], 2)) + 4 * M[11] * (M[30] + M[12]) * (M[21] + M[3])) / pow(m00, 7))
+    invariants.append((M[20] * M[2] - pow(M[11], 2)) / pow(m00, 4))
+    invariants.append((M[30] * M[12] + M[21] * M[3] - pow(M[12], 2) - pow(M[21], 2)) / pow(m00, 5))
+    invariants.append((M[20] * (M[21] * M[3] - pow(M[12], 2)) + M[2] * (M[3] * M[12] - pow(M[21], 2)) - M[11] * (M[30] * M[3] - M[21] * M[12])) / pow(m00, 7))
+    invariants.append((pow(M[30] * M[3] - M[12] * M[21], 2) - 4 * (M[30] * M[12] - pow(M[21], 2)) * (M[3] * M[21] - M[12])) / pow(m00, 10))
 
     return invariants
 

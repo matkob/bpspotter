@@ -1,17 +1,17 @@
-import cv2
+from collections import defaultdict
+
 import numpy as np
 
 from color import range_filter
 from color import rgb2hsv
 from logger import logger
 from model import BoundingBox
+from model import Color
 from transform import dilate
 from transform import erode
 
 
 def segment(image):
-    cv2.imshow('img', image)
-    cv2.waitKey(0)
     kernel = np.ones((3, 3), np.uint8)
     logger.info('converting RGB to HSV')
     hsv = rgb2hsv(image)
@@ -20,10 +20,11 @@ def segment(image):
     mask_yellow = dilate(erode(range_filter(hsv, (20, 10, 50), (40, 255, 255)), kernel), kernel)
     mask_white = dilate(erode(range_filter(hsv, (0, 0, 160), (180, 50, 255)), kernel), kernel)
     logger.info('split and merge')
-    green_objects = split_merge(mask_green, image)
-    yellow_objects = split_merge(mask_yellow, image)
-    white_objects = split_merge(mask_white, image)
-    return green_objects, yellow_objects, white_objects
+    objects = defaultdict(list)
+    objects[Color.GREEN] = split_merge(mask_green, image)
+    objects[Color.YELLOW] = split_merge(mask_yellow, image)
+    objects[Color.WHITE] = split_merge(mask_white, image)
+    return objects
 
 
 def is_uniform(image):
