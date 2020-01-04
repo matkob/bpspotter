@@ -18,10 +18,10 @@ for img, file in true_logos:
         for obj, roi in objects[color]:
             if roi.size() < 500:
                 continue
-            logger.info(f'calculating object invariants, region: {roi}')
+            logger.info(f'calculating {color.name} object invariants, region: {roi}')
             invariants = image_invariants(obj, lambda px: px == 255)
-            descriptor = Descriptor(color, roi, invariants[0:4] + invariants[6:8])
-            distance = descriptor.distance(model)
+            descriptor = Descriptor(color, roi, invariants)
+            distance = descriptor.distance(model, [0, 1, 6])
             logger.info(f'calculated invariants {descriptor.invariants}')
             logger.info(f'calculated distance {distance}')
             cv2.imshow('roi', obj)

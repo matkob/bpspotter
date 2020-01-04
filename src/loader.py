@@ -33,8 +33,7 @@ def load_model():
     model = np.loadtxt('data/filtered_model.csv', delimiter='\t', dtype=float)
     descriptors = {}
     for color in Color:
-        mean = np.mean(model[model[:, 0] == 0][:, 1:], axis=0)
-        stddev = np.std(model[model[:, 0] == 0][:, 1:], axis=0)
+        mean = np.mean(model[model[:, 0] == color][:, 1:], axis=0)
+        stddev = np.std(model[model[:, 0] == color][:, 1:], axis=0)
         descriptors[color] = np.vstack((mean, stddev))
     return descriptors
-

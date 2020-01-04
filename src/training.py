@@ -40,17 +40,17 @@ def print_analysed_examples():
         for file in listdir(green_dir):
             img = cv2.imread(green_dir + file, cv2.IMREAD_GRAYSCALE)
             invariants = image_invariants(img, lambda px: px > 200)
-            line = '\t'.join(['0'] + [str(i) for i in invariants[0:4] + invariants[6:8]])
+            line = '\t'.join(['0'] + [str(i) for i in invariants])
             f.write(f'{line}\n')
         for file in listdir(yellow_dir):
             img = cv2.imread(yellow_dir + file, cv2.IMREAD_GRAYSCALE)
             invariants = image_invariants(img, lambda px: px > 200)
-            line = '\t'.join(['1'] + [str(i) for i in invariants[0:4] + invariants[6:8]])
+            line = '\t'.join(['1'] + [str(i) for i in invariants])
             f.write(f'{line}\n')
         for file in listdir(white_dir):
             img = cv2.imread(white_dir + file, cv2.IMREAD_GRAYSCALE)
             invariants = image_invariants(img, lambda px: px > 200)
-            line = '\t'.join(['2'] + [str(i) for i in invariants[0:4] + invariants[6:8]])
+            line = '\t'.join(['2'] + [str(i) for i in invariants])
             f.write(f'{line}\n')
 
 

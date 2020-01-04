@@ -30,10 +30,10 @@ class Descriptor:
         self.box = box
         self.invariants = invariants
 
-    def distance(self, model: dict):
+    def distance(self, model: dict, indexes):
         invariants = model[self.color]
         d = 0.0
-        for i in range(invariants.shape[1]):
+        for i in indexes:
             mean, std = invariants.T[i]
             d += pow(mean - self.invariants[i], 2) / pow(std, 2)
         return sqrt(d)
