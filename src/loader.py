@@ -9,9 +9,9 @@ from model import Color
 def load_images():
     bp_logos = []
     fake_logos = []
-    true_dir = 'data/true/'
-    false_dir = 'data/false/'
-    for file in listdir(true_dir)[1:10]:
+    true_dir = 'data/true_not_digital/'
+    false_dir = 'data/false_not_digital/'
+    for file in listdir(true_dir)[30:42]:
         img = cv2.imread(true_dir + file)
         img = normalize_size(img, 360, 640)
         bp_logos.append((img, file))
@@ -30,7 +30,7 @@ def normalize_size(img, max_height, max_width):
 
 
 def load_model():
-    model = np.loadtxt('data/filtered_model.csv', delimiter='\t', dtype=float)
+    model = np.loadtxt('data/big_model.csv', delimiter='\t', dtype=float)
     descriptors = {}
     for color in Color:
         mean = np.mean(model[model[:, 0] == color][:, 1:], axis=0)

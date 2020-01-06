@@ -6,6 +6,7 @@ import cv2
 import loader
 from analysis import image_invariants
 from logger import logger
+from model import Color
 from segmentation import segment
 
 
@@ -33,25 +34,15 @@ def save_examples():
 
 
 def create_model(filename):
-    green_dir = 'data/train_green/'
-    yellow_dir = 'data/train_yellow/'
-    white_dir = 'data/train_white/'
     with open(f'data/{filename}.csv', 'w') as f:
-        for file in listdir(green_dir):
-            img = cv2.imread(green_dir + file, cv2.IMREAD_GRAYSCALE)
-            invariants = image_invariants(img, lambda px: px > 200)
-            line = '\t'.join(['0'] + [str(i) for i in invariants])
-            f.write(f'{line}\n')
-        for file in listdir(yellow_dir):
-            img = cv2.imread(yellow_dir + file, cv2.IMREAD_GRAYSCALE)
-            invariants = image_invariants(img, lambda px: px > 200)
-            line = '\t'.join(['1'] + [str(i) for i in invariants])
-            f.write(f'{line}\n')
-        for file in listdir(white_dir):
-            img = cv2.imread(white_dir + file, cv2.IMREAD_GRAYSCALE)
-            invariants = image_invariants(img, lambda px: px > 200)
-            line = '\t'.join(['2'] + [str(i) for i in invariants])
-            f.write(f'{line}\n')
+        for color in Color:
+            image_dir = f'data/train_{color.name}/'
+            for file in listdir(image_dir):
+                img = cv2.imread(image_dir + file, cv2.IMREAD_GRAYSCALE)
+                invariants = image_invariants(img, lambda px: px > 200)
+                line = '\t'.join([str(color.value)] + [str(i) for i in invariants])
+                f.write(f'{line}\n')
 
 
-save_examples()
+# save_examples()
+create_model('big_model')

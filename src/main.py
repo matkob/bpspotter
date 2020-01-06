@@ -27,14 +27,15 @@ def spot_bp_logo():
                 logger.info(f'calculating {color.name} object invariants, region: {roi}')
                 invariants = image_invariants(obj, lambda px: px == 255)
                 descriptor = Descriptor(color, roi, invariants)
-                distance = descriptor.distance(model, [0, 1, 6])
+                distance = descriptor.distance(model, best_invariants(color))
                 logger.info(f'invariants {descriptor.invariants}')
                 logger.info(f'distance {distance}')
                 cv2.imshow('roi', obj)
                 cv2.waitKey(0)
-                if distance < 2.0:
+                if distance < 2.2:
                     logger.info('object recognized')
                     recognized_regions[color].append(descriptor)
+        cv2.destroyAllWindows()
         for green_d in recognized_regions[Color.GREEN]:
             yellow_objects = find_all_inside(green_d.box, recognized_regions[Color.YELLOW])
             if len(yellow_objects) == 0:
@@ -42,6 +43,9 @@ def spot_bp_logo():
             white_object = find_object_inside([obj.box for obj in yellow_objects], recognized_regions[Color.WHITE])
             if white_object is not None:
                 logger.info(f'found bp logo in image {file}')
+                cv2.imshow('logo', img[green_d.box.y0:green_d.box.y1, green_d.box.x0:green_d.box.x1])
+                cv2.waitKey(0)
+                cv2.destroyWindow('logo')
             else:
                 logger.info(f'bp logo not found in image {file}')
 
@@ -56,6 +60,15 @@ def find_object_inside(boxes, descriptors):
 
 def find_all_inside(box, descriptors):
     return [d for d in descriptors if d.box.inside(box)]
+
+
+def best_invariants(color):
+    if color is Color.GREEN:
+        return [0, 1, 6]
+    elif color is Color.YELLOW:
+        return [0]
+    else:
+        return [0, 6]
 
 
 spot_bp_logo()
