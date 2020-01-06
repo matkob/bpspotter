@@ -11,7 +11,6 @@ from segmentation import segment
 
 
 def spot_bp_logo():
-    logger.info('loading images')
     true_logos, false_logos = load_images()
     model = load_model()
     for img, file in true_logos:
@@ -22,20 +21,16 @@ def spot_bp_logo():
         recognized_regions = defaultdict(list)
         for color in objects.keys():
             for obj, roi in objects[color]:
-                if roi.size() < 500:
+                if roi.size() < 200:
                     continue
                 logger.info(f'calculating {color.name} object invariants, region: {roi}')
                 invariants = image_invariants(obj, lambda px: px == 255)
                 descriptor = Descriptor(color, roi, invariants)
                 distance = descriptor.distance(model, best_invariants(color))
-                logger.info(f'invariants {descriptor.invariants}')
                 logger.info(f'distance {distance}')
-                cv2.imshow('roi', obj)
-                cv2.waitKey(0)
-                if distance < 2.2:
+                if distance < 4.5:
                     logger.info('object recognized')
                     recognized_regions[color].append(descriptor)
-        cv2.destroyAllWindows()
         for green_d in recognized_regions[Color.GREEN]:
             yellow_objects = find_all_inside(green_d.box, recognized_regions[Color.YELLOW])
             if len(yellow_objects) == 0:
@@ -44,10 +39,10 @@ def spot_bp_logo():
             if white_object is not None:
                 logger.info(f'found bp logo in image {file}')
                 cv2.imshow('logo', img[green_d.box.y0:green_d.box.y1, green_d.box.x0:green_d.box.x1])
-                cv2.waitKey(0)
-                cv2.destroyWindow('logo')
             else:
                 logger.info(f'bp logo not found in image {file}')
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 
 def find_object_inside(boxes, descriptors):

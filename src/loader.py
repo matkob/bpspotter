@@ -3,6 +3,7 @@ from os import listdir
 import cv2
 import numpy as np
 
+from logger import logger
 from model import Color
 
 
@@ -10,12 +11,13 @@ def load_images():
     bp_logos = []
     fake_logos = []
     true_dir = 'data/true_not_digital/'
-    false_dir = 'data/false_not_digital/'
-    for file in listdir(true_dir)[30:42]:
+    false_dir = 'data/false/'
+    logger.info('loading images')
+    for file in listdir(true_dir):
         img = cv2.imread(true_dir + file)
         img = normalize_size(img, 360, 640)
         bp_logos.append((img, file))
-    for file in listdir(false_dir)[:1]:
+    for file in listdir(false_dir):
         img = cv2.imread(false_dir + file)
         img = normalize_size(img, 360, 640)
         fake_logos.append((img, file))

@@ -16,9 +16,9 @@ def segment(image):
     hsv = rgb2hsv(image)
     objects = defaultdict(list)
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        future_green = executor.submit(extract_color_regions, hsv, (40, 10, 50), (90, 255, 255))
-        future_yellow = executor.submit(extract_color_regions, hsv, (20, 10, 50), (40, 255, 255))
-        future_white = executor.submit(extract_color_regions, hsv, (0, 0, 160), (180, 50, 255))
+        future_green = executor.submit(extract_color_regions, hsv, (40, 10, 45), (90, 255, 255))
+        future_yellow = executor.submit(extract_color_regions, hsv, (20, 10, 45), (40, 255, 255))
+        future_white = executor.submit(extract_color_regions, hsv, (0, 0, 140), (180, 65, 255))
         objects[Color.GREEN] = future_green.result()
         objects[Color.YELLOW] = future_yellow.result()
         objects[Color.WHITE] = future_white.result()
@@ -32,6 +32,7 @@ def extract_color_regions(image, color_low, color_high):
     logger.info('dilating')
     mask = dilate(mask, kernel)
     logger.info('eroding')
+    mask = erode(mask, kernel)
     mask = erode(mask, kernel)
     return split_merge(image, mask)
 
