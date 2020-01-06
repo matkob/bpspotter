@@ -13,11 +13,11 @@ def load_images():
     false_dir = 'data/false/'
     for file in listdir(true_dir)[1:10]:
         img = cv2.imread(true_dir + file)
-        img = normalize_size(img, 720, 1280)
+        img = normalize_size(img, 360, 640)
         bp_logos.append((img, file))
     for file in listdir(false_dir)[:1]:
         img = cv2.imread(false_dir + file)
-        img = normalize_size(img, 720, 1280)
+        img = normalize_size(img, 360, 640)
         fake_logos.append((img, file))
     return bp_logos, fake_logos
 

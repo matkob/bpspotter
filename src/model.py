@@ -16,6 +16,9 @@ class BoundingBox:
     def size(self):
         return abs(self.x1 - self.x0) * abs(self.y1 - self.y0)
 
+    def inside(self, other):
+        return self.x0 >= other.x0 and self.y0 >= other.y0 and self.x1 <= other.x1 and self.y1 <= other.y1
+
 
 class Color(IntEnum):
     GREEN = 0

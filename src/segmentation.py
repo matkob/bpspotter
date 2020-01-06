@@ -1,3 +1,4 @@
+import concurrent.futures
 from collections import defaultdict
 
 import numpy as np
@@ -12,19 +13,27 @@ from transform import erode
 
 
 def segment(image):
-    kernel = np.ones((3, 3), np.uint8)
-    logger.info('converting RGB to HSV')
     hsv = rgb2hsv(image)
-    logger.info('preparing masks')
-    mask_green = dilate(erode(range_filter(hsv, (40, 10, 50), (90, 255, 255)), kernel), kernel)
-    mask_yellow = dilate(erode(range_filter(hsv, (20, 10, 50), (40, 255, 255)), kernel), kernel)
-    mask_white = dilate(erode(range_filter(hsv, (0, 0, 160), (180, 50, 255)), kernel), kernel)
-    logger.info('split and merge')
     objects = defaultdict(list)
-    objects[Color.GREEN] = split_merge(mask_green, image)
-    objects[Color.YELLOW] = split_merge(mask_yellow, image)
-    objects[Color.WHITE] = split_merge(mask_white, image)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        future_green = executor.submit(extract_color_regions, hsv, (40, 10, 50), (90, 255, 255))
+        future_yellow = executor.submit(extract_color_regions, hsv, (20, 10, 50), (40, 255, 255))
+        future_white = executor.submit(extract_color_regions, hsv, (0, 0, 160), (180, 50, 255))
+        objects[Color.GREEN] = future_green.result()
+        objects[Color.YELLOW] = future_yellow.result()
+        objects[Color.WHITE] = future_white.result()
     return objects
+
+
+def extract_color_regions(image, color_low, color_high):
+    kernel = np.ones((3, 3), np.uint8)
+    logger.info('preparing masks')
+    mask = range_filter(image, color_low, color_high)
+    logger.info('dilating')
+    mask = dilate(mask, kernel)
+    logger.info('eroding')
+    mask = erode(mask, kernel)
+    return split_merge(image, mask)
 
 
 def is_uniform(image):
@@ -101,7 +110,7 @@ def extract(regions, image):
     return roi
 
 
-def split_merge(mask, image):
+def split_merge(image, mask):
     y1, x1 = mask.shape
     parts = [(mask, 0, 0, x1, y1)]
     logger.info('splitting')

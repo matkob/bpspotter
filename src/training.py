@@ -32,11 +32,11 @@ def save_examples():
         cv2.destroyAllWindows()
 
 
-def print_analysed_examples():
+def create_model(filename):
     green_dir = 'data/train_green/'
     yellow_dir = 'data/train_yellow/'
     white_dir = 'data/train_white/'
-    with open('data/filtered_model.csv', 'w') as f:
+    with open(f'data/{filename}.csv', 'w') as f:
         for file in listdir(green_dir):
             img = cv2.imread(green_dir + file, cv2.IMREAD_GRAYSCALE)
             invariants = image_invariants(img, lambda px: px > 200)
@@ -54,4 +54,4 @@ def print_analysed_examples():
             f.write(f'{line}\n')
 
 
-print_analysed_examples()
+save_examples()

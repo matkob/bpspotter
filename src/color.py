@@ -1,7 +1,10 @@
 import numpy as np
 
+from logger import logger
+
 
 def rgb2hsv(image):
+    logger.info('converting RGB to HSV')
     copy = np.array(image, copy=True)
     height, width, channels = copy.shape
     assert channels == 3
