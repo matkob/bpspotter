@@ -15,7 +15,7 @@ def spot_bp_logo():
     model = load_model()
     for img, file in true_logos:
         cv2.imshow('image', img)
-        cv2.waitKey(0)
+        cv2.waitKey(100)
         logger.info(f'extracting roi from {file}')
         objects = segment(img)
         recognized_regions = defaultdict(list)
@@ -28,28 +28,34 @@ def spot_bp_logo():
                 descriptor = Descriptor(color, roi, invariants)
                 distance = descriptor.distance(model, best_invariants(color))
                 logger.info(f'distance {distance}')
-                if distance < 4.5:
+                if distance < 2.1:
+                    color_edges(img, roi, (255, 255, 255), width=1)
+                    cv2.imshow('image', img)
+                    cv2.waitKey(100)
                     logger.info('object recognized')
                     recognized_regions[color].append(descriptor)
         for green_d in recognized_regions[Color.GREEN]:
-            yellow_objects = find_all_inside(green_d.box, recognized_regions[Color.YELLOW])
-            if len(yellow_objects) == 0:
+            yellow_d = find_object_inside(green_d.box, recognized_regions[Color.YELLOW])
+            if yellow_d is None:
                 continue
-            white_object = find_object_inside([obj.box for obj in yellow_objects], recognized_regions[Color.WHITE])
-            if white_object is not None:
-                logger.info(f'found bp logo in image {file}')
-                cv2.imshow('logo', img[green_d.box.y0:green_d.box.y1, green_d.box.x0:green_d.box.x1])
-            else:
-                logger.info(f'bp logo not found in image {file}')
+            white_d = find_object_inside(yellow_d.box, recognized_regions[Color.WHITE])
+            if white_d is None:
+                continue
+            logger.info(f'found bp logo in image {file}')
+            color_edges(img, green_d.box, (0, 255, 0), width=3)
+            color_edges(img, yellow_d.box, (0, 255, 255), width=3)
+            color_edges(img, white_d.box, (0, 0, 0), width=3)
+            cv2.imshow('image', img)
+            cv2.waitKey(100)
+        logger.info('image processed')
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
 
-def find_object_inside(boxes, descriptors):
-    for box in boxes:
-        for d in descriptors:
-            if d.box.inside(box):
-                return d
+def find_object_inside(box, descriptors):
+    for d in descriptors:
+        if d.box.inside(box):
+            return d
     return None
 
 
@@ -64,6 +70,13 @@ def best_invariants(color):
         return [0]
     else:
         return [0, 6]
+
+
+def color_edges(image, box, color, width=2):
+    image[box.y0:box.y0 + width, box.x0:box.x1] = color
+    image[box.y1 - width:box.y1, box.x0:box.x1] = color
+    image[box.y0:box.y1, box.x0:box.x0 + width] = color
+    image[box.y0:box.y1, box.x1 - width:box.x1] = color
 
 
 spot_bp_logo()
