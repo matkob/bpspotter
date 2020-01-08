@@ -45,4 +45,4 @@ def create_model(filename):
 
 
 # save_examples()
-create_model('big_model')
+create_model('adjusted_model')

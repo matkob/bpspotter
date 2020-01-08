@@ -13,11 +13,11 @@ def load_images():
     true_dir = 'data/true_not_digital/'
     false_dir = 'data/false/'
     logger.info('loading images')
-    for file in listdir(true_dir):
+    for file in listdir(true_dir)[4:5]:
         img = cv2.imread(true_dir + file)
         img = normalize_size(img, 360, 640)
         bp_logos.append((img, file))
-    for file in listdir(false_dir):
+    for file in listdir(false_dir)[:10]:
         img = cv2.imread(false_dir + file)
         img = normalize_size(img, 360, 640)
         fake_logos.append((img, file))
